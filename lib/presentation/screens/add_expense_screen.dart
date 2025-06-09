@@ -7,7 +7,11 @@ import 'package:gastos_flutter/domain/entities/expense.dart';
 
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  final Expense? expense;
+  const AddExpenseScreen({
+    super.key,
+    this.expense
+  });
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -16,28 +20,42 @@ class AddExpenseScreen extends StatefulWidget {
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _categoryIdController = TextEditingController();
+  //final TextEditingController _categoryIdController = TextEditingController();
   final TextEditingController _payeeController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-  final TextEditingController _tagController = TextEditingController();
+  //final TextEditingController _tagController = TextEditingController();
   String? _selectedCategory;
   String? _selectedTag;
 
 
+  @override
+  void initState() {
+    super.initState();
+    if(widget.expense != null){
+      _amountController.text = '${widget.expense!.amount}';
+      _payeeController.text = widget.expense!.payee;
+      _noteController.text = widget.expense!.note;
+      _dateController.text = '${widget.expense!.date}';
+      _selectedCategory = widget.expense!.categoryId;
+      _selectedTag = widget.expense!.tag;
+    }
+  }
 
-
+  
 
 
 
   @override
   Widget build(BuildContext context) {
+  
 
     final colors = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Add Expense'),
         backgroundColor: colors.primary,
       ),
@@ -106,15 +124,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Consumer<ExpenseProvider>(
               builder: (context, provider, child) {
                 return DropdownButtonFormField<String>(
-                  value: _selectedCategory,
+                  value: provider.expenseCategories.any((c) => c.name == _selectedCategory)
+                      ? _selectedCategory
+                      : null,
                   decoration: InputDecoration(
                     labelText: 'Category',
-                    border: OutlineInputBorder()
+                    border: OutlineInputBorder(),
                   ),
                   items: provider.expenseCategories.map((category) {
                     return DropdownMenuItem(
                       value: category.name,
-                      child: Text(category.name),
+                      child: Text(category.name, style: TextStyle(fontWeight: FontWeight.w400),),
                     );
                   }).toList(),
 
@@ -132,18 +152,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             Consumer<ExpenseProvider>(
               builder: (context, provider, child) {
                 return DropdownButtonFormField<String>(
-                  value: _selectedTag,
+                  value: provider.expenseTags.any((tag) => tag.name == _selectedTag)
+                  ? _selectedTag
+                  : null,
                   decoration: InputDecoration(
-                    labelText: 'Category',
+                    labelText: 'Tag',
                     border: OutlineInputBorder()
                   ),
                   items: provider.expenseTags.map((tag) {
                     return DropdownMenuItem(
                       value: tag.name,
-                      child: Text(tag.name),
+                      child: Text(tag.name, style: TextStyle(fontWeight: FontWeight.w400)),
                     );
                   }).toList(),
-
+                  
                   onChanged: (value) {
                     setState(() {
                       _selectedTag = value;
@@ -170,24 +192,26 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   void _saveExpense(BuildContext context){
-    final expense = Expense(
+    if(_selectedCategory != null && _selectedTag != null){
+      final expense = Expense(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       amount: double.parse(_amountController.text),
-      categoryId: _categoryIdController.text,
+      categoryId: _selectedCategory!,
       payee: _payeeController.text,
       note: _noteController.text,
       date: DateTime.parse(_dateController.text),
-      tag: _tagController.text
+      tag: _selectedTag!
     );
     Provider.of<ExpenseProvider>(context, listen: false).addExpense(expense);
     Navigator.pop(context);
+    }
   }
 
   @override
   void dispose() {
-    _tagController.dispose();
+    //_tagController.dispose();
     _amountController.dispose();
-    _categoryIdController.dispose();
+    //_categoryIdController.dispose();
     _dateController.dispose();
     _noteController.dispose();
     _payeeController.dispose();

@@ -12,6 +12,7 @@ class TagManagementScreen extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: colors.primary,
         title: Text('Manage Tags', style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
