@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gastos_flutter/presentation/screens/category_management_screen.dart';
-import 'package:gastos_flutter/presentation/widgets/add_category_dialog.dart';
+import 'package:gastos_flutter/presentation/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:gastos_flutter/config/providers/expense_provider.dart';
@@ -200,10 +199,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
             FilledButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const CategoryManagementScreen()
-                  )
+                showDialog(
+                  context: context,
+                  builder: (context) => const AddTagDialog()
                 );
               },
               child: Text('Go to add a new tag')

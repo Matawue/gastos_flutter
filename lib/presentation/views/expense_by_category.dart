@@ -27,7 +27,7 @@ Widget build(BuildContext context) {
 
       return ExpansionTile(
         title: Text(
-          '${category.name} - Amount \$$totalAmount',
+          '${category.name} - Total \$$totalAmount',
           style: TextStyle(color: colors.primary, fontSize: 20, fontWeight: FontWeight.w500),
         ),
         children: expenses.map((expense) => ListTile(
