@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gastos_flutter/config/providers/expense_provider.dart';
-import 'package:gastos_flutter/presentation/widgets/add_tag_dialog.dart';
+import 'package:gastos_flutter/presentation/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 

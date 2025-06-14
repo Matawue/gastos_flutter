@@ -3,9 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:gastos_flutter/config/providers/expense_provider.dart';
 import 'package:gastos_flutter/presentation/screens/add_expense_screen.dart';
-import 'package:gastos_flutter/presentation/views/expense_by_category.dart';
-import 'package:gastos_flutter/presentation/views/expense_by_date.dart';
-import 'package:gastos_flutter/presentation/widgets/side_menu.dart';
+import 'package:gastos_flutter/presentation/views/views.dart';
+import 'package:gastos_flutter/presentation/widgets/widgets.dart';
 import 'package:provider/provider.dart';
 
 
@@ -30,11 +29,12 @@ class HomeScreen extends StatelessWidget {
             //indicatorColor: Colors.white,
             indicatorAnimation: TabIndicatorAnimation.elastic,
             //physics: BouncingScrollPhysics(),
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white54,
             
             tabs: [
-              // TODO: hacer que el que no este elegido se vea un poco transparente
-              Tab(child: Text('By Date', style: TextStyle(color: Colors.white),),),
-              Tab(child: Text('By Category', style: TextStyle(color: Colors.white),),)
+              Tab(child: Text('By Date'),),
+              Tab(child: Text('By Category'),)
             ]
           ),
         ),
@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
             return TabBarView(
               children: <Widget>[
                 ExpenseByDate(provider: provider,),
-                ExpenseByCategory() // TODO: hacer funcionalidad y agregar como parametro required el provider
+                ExpenseByCategory(provider: provider,)
               ]
             );
           },

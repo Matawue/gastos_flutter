@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gastos_flutter/config/providers/expense_provider.dart';
 import 'package:gastos_flutter/domain/entities/expense.dart';
-import 'package:gastos_flutter/presentation/screens/add_expense_screen.dart';
+import 'package:gastos_flutter/presentation/screens/view_expense_screen.dart';
 import 'package:intl/intl.dart';
 
 
@@ -22,7 +22,8 @@ class ExpenseByDate extends StatelessWidget {
     final List<Expense> sortedByDate = List<Expense>.from(provider.expenses)
     ..sort((a, b) => int.parse(DateFormat('yyyyMMdd').format(b.date))
     .compareTo(int.parse(DateFormat('yyyyMMdd').format(a.date))));
-    return ListView.builder(
+    return (provider.expenses.isNotEmpty)
+    ?ListView.builder(
             itemCount: sortedByDate.length,
             itemBuilder: (context, index){
               final expense = sortedByDate[index];
@@ -46,13 +47,16 @@ class ExpenseByDate extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddExpenseScreen(expense: expense)
+                        builder: (context) => ViewExpenseScreen(expenseId: expense.id,)
                       )
                     );
                   },
                 ),
               );
             }
-          );
+          )
+    :Center(
+      child: Text('Click the "+" button to record expenses.', style: TextStyle(color: Colors.black45, fontSize: 20),)
+    );
   }
 }

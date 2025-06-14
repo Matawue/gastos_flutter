@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gastos_flutter/presentation/screens/category_management_screen.dart';
+import 'package:gastos_flutter/presentation/widgets/add_category_dialog.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:gastos_flutter/config/providers/expense_provider.dart';
@@ -27,6 +29,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   //final TextEditingController _tagController = TextEditingController();
   String? _selectedCategory;
   String? _selectedTag;
+  bool editExpense = false;
+  String? expenseId;
+
 
 
   @override
@@ -39,6 +44,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       _dateController.text = '${widget.expense!.date}';
       _selectedCategory = widget.expense!.categoryId;
       _selectedTag = widget.expense!.tag;
+      editExpense = true;
+      expenseId = widget.expense!.id;
     }
   }
 
@@ -56,9 +63,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Add Expense'),
+        title: (editExpense)? Text('Edit Expense') :Text('Add Expense'),
         backgroundColor: colors.primary,
       ),
+
+      resizeToAvoidBottomInset: false,
 
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -73,7 +82,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               keyboardType: TextInputType.number,
             ),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 15,),
 
             TextField(
               controller: _payeeController,
@@ -83,7 +92,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
             ),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 15,),
 
             TextField(
               controller: _noteController,
@@ -93,7 +102,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               ),
             ),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 15,),
 
             TextField(
               controller: _dateController,
@@ -118,9 +127,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               readOnly: true,
             ),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 15,),
      
-            // TODO: Quiero que si esta vacio, mande a agregar una categoria al category management por medio de un boto 
             Consumer<ExpenseProvider>(
               builder: (context, provider, child) {
                 return DropdownButtonFormField<String>(
@@ -147,7 +155,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               },
             ),
 
-            SizedBox(height: 20,),
+            SizedBox(height: 10,),
             
             Consumer<ExpenseProvider>(
               builder: (context, provider, child) {
@@ -172,7 +180,33 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     });
                   }
                 );
+                
               },
+            ),
+
+            SizedBox(height: 5,),
+
+            FilledButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const AddCategoryDialog() 
+                );
+              },
+              child: const Text('Go to add a new category')
+            ),
+
+            SizedBox(height: 5,),
+
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CategoryManagementScreen()
+                  )
+                );
+              },
+              child: Text('Go to add a new tag')
             ),
 
          
@@ -194,7 +228,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void _saveExpense(BuildContext context){
     if(_selectedCategory != null && _selectedTag != null){
       final expense = Expense(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: (editExpense) ? expenseId! : DateTime.now().millisecondsSinceEpoch.toString(),
       amount: double.parse(_amountController.text),
       categoryId: _selectedCategory!,
       payee: _payeeController.text,
@@ -202,7 +236,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       date: DateTime.parse(_dateController.text),
       tag: _selectedTag!
     );
-    Provider.of<ExpenseProvider>(context, listen: false).addExpense(expense);
+    (editExpense) ? Provider.of<ExpenseProvider>(context, listen: false).addOrUpdateExpense(expense) : Provider.of<ExpenseProvider>(context, listen: false).addExpense(expense);
     Navigator.pop(context);
     }
   }
